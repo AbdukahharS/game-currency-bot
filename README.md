@@ -1,56 +1,60 @@
-# Telegram-бот (bun + grammY)
+# Telegram bot (bun + grammY)
 
-Интерактивная оболочка магазина по ТЗ §1.2. Витриной служит **Telegram Mini App** —
-развёрнутый фронтенд (`frontend/`), открываемый в WebView Telegram. Бот не дублирует
-магазин: он отвечает за команды, deep links и навигацию в Mini App.
+Interactive shell around the shop per the spec (TZ §1.2). The storefront is the
+**Telegram Mini App** — the deployed frontend (`frontend/`) opened inside
+Telegram's WebView. The bot does not duplicate the shop: it handles commands,
+deep links and navigation into the Mini App.
 
-## Что делает бот
+## What the bot does
 
-| Элемент | Поведение |
+| Element | Behavior |
 |---|---|
-| Меню-кнопка бота | Открывает Mini App (`WEBAPP_URL`) |
-| `/start` | Приветствие + кнопка «Открыть магазин» (`web_app`) |
-| `/start order_{id}` | Deep link возврата с оплаты (ТЗ §7.2): кнопка, открывающая Mini App на странице заказа (`startapp=order_{id}`) |
-| `/help` | Как купить (5 шагов) |
-| `/support` | Ссылка поддержки из настроек админки (`/api/config → support_link`), кэш 5 минут |
-| Уведомления §10 | **Не отправляет**: их шлёт бэкенд напрямую через Bot API тем же токеном (`backend/app/services/notifications.py`) — пользователь видит их от того же бота |
+| Bot menu button | Opens the Mini App (`WEBAPP_URL`) |
+| `/start` | Greeting + "Open shop" button (`web_app`) |
+| `/start order_{id}` | Payment return deep link (TZ §7.2): button that opens the Mini App on the order page (`startapp=order_{id}`) |
+| `/help` | How to buy (5 steps) |
+| `/support` | Support link from admin settings (`/api/config → support_link`), cached for 5 minutes |
+| §10 notifications | **Not sent by the bot**: the backend sends them directly via the Bot API with the same token (`backend/app/services/notifications.py`) — users see them from the same bot |
 
-Язык сообщений бота (ru/uz) определяется по языку клиента Telegram; язык витрины
-выбирается в Mini App и хранится у бэкенда. Своего хранилища у бота нет.
+The bot's message language (ru/uz) follows the Telegram client's interface
+language; the storefront language is chosen inside the Mini App and stored by
+the backend. The bot keeps no storage of its own.
 
-## Запуск
+## Running
 
 ```bash
 cd telegram
 bun install
-cp .env.example ../../.env-telegram   # или задать переменные иначе
+cp .env.example ../../.env-telegram   # or export the variables another way
 bun run dev                           # long polling
 ```
 
-Обязательные переменные: `TELEGRAM_BOT_TOKEN`, `WEBAPP_URL` (или `PUBLIC_BASE_URL`).
-Опционально: `API_BASE_URL` (поддержка из админки), `SUPPORT_URL`, webhook-переменные.
+Required variables: `TELEGRAM_BOT_TOKEN`, `WEBAPP_URL` (or `PUBLIC_BASE_URL`).
+Optional: `API_BASE_URL` (support link from the admin panel), `SUPPORT_URL`,
+webhook variables.
 
-Прод — вебхук:
+Production — webhook:
 
 ```bash
-WEBHOOK_URL=https://<домен>/bot/webhook WEBHOOK_SECRET=<random> bun run start
+WEBHOOK_URL=https://<domain>/bot/webhook WEBHOOK_SECRET=<random> bun run start
 ```
 
-Важно: один токен = один получатель updates. Пока `docker compose` сервис `bot`
-(Python) работает, локальный/TS-бот не сможет pollить. По умолчанию поднимается
-только `bot-telegram` (см. `docker-compose.yml`, старый сервис — профиль `legacy`).
+Important: one token = one consumer of updates. While the `docker compose`
+service `bot` (Python) is running, the TS bot cannot poll. By default only
+`bot-telegram` starts (see `docker-compose.yml`; the old service is behind the
+`legacy` profile).
 
-## Структура
+## Structure
 
 ```
 src/
 ├── index.ts            # entry: long polling (dev) / webhook (prod)
-├── bot.ts              # экземпляр grammY, меню-кнопка, команды
-├── config.ts           # env (секреты — только окружение, ТЗ §11.1)
-├── texts.ts            # тексты ru/uz
+├── bot.ts              # grammY instance, menu button, commands
+├── config.ts           # env (secrets live only in the environment, TZ §11.1)
+├── texts.ts            # ru/uz texts
 ├── handlers/
-│   ├── start.ts        # /start + deep link order_{id}
+│   ├── start.ts        # /start + order_{id} deep link
 │   └── menu.ts         # /help, /support
 └── services/
-    └── support.ts      # ссылка поддержки из публичного конфига API
+    └── support.ts      # support link from the API's public config
 ```
