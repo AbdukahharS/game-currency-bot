@@ -24,11 +24,7 @@ export const config = {
 			throw new Error('Set WEBAPP_URL (Mini App URL) or PUBLIC_BASE_URL')
 		return trimSlash(url)
 	},
-	/** Backend origin — used only to read the public config (support link). */
-	get apiBaseUrl(): string | undefined {
-		const v = optional('API_BASE_URL')
-		return v ? trimSlash(v) : undefined
-	},
+	/** Support link for the /support command (env-only since the backend rewrite). */
 	get supportUrl(): string | undefined {
 		return optional('SUPPORT_URL')
 	},
