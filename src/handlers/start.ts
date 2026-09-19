@@ -1,9 +1,15 @@
 import { type Bot, InlineKeyboard } from 'grammy'
 import { config } from '../config'
-import { langOf, orderRedirectText, texts } from '../texts'
+import { langOf, texts } from '../texts'
 
-/** payload grammar: TZ §7.2 return_url — t.me/<bot>?start=order_{order_id} */
-const ORDER_PAYLOAD = /^order[_-]?(\d+)$/i
+/** OrderRead.id grammar — the backend ids orders by UUID. */
+const UUID = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+
+/**
+ * payload grammar: TZ §7.2 return_url — t.me/<bot>?start=order_{order_id},
+ * where order_id is a UUID; a numeric tail still matches legacy links.
+ */
+const ORDER_PAYLOAD = new RegExp(`^order[_-]?(${UUID}|\\d+)$`, 'i')
 
 /**
  * The t.me link is the only way to open the Mini App with a start_param,
@@ -22,7 +28,7 @@ export function registerStart(bot: Bot) {
 		const orderMatch = ORDER_PAYLOAD.exec(payload)
 		if (orderMatch?.[1]) {
 			const id = orderMatch[1]
-			return ctx.reply(orderRedirectText(lang, id), {
+			return ctx.reply(texts.orderRedirect[lang], {
 				reply_markup: new InlineKeyboard().url(
 					texts.openOrderButton[lang],
 					miniAppLink(ctx.me.username, `order_${id}`),

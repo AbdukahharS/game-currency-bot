@@ -1,7 +1,7 @@
 /**
  * Bot texts, ru/uz (TZ §1.3). The bot has no per-user storage, so it picks the
  * language from the Telegram client's reported interface language; the real
- * storefront language is chosen inside the Mini App (frontend → /api/me/language).
+ * storefront language is chosen inside the Mini App (frontend → /users/me).
  */
 
 export type Lang = 'ru' | 'uz'
@@ -10,9 +10,6 @@ export const langOf = (code?: string | null): Lang =>
 	code?.toLowerCase().startsWith('uz') ? 'uz' : 'ru'
 
 type Copy = Record<Lang, string>
-
-const fill = (template: string, values: Record<string, string>) =>
-	template.replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? `{${key}}`)
 
 export const texts = {
 	greeting: {
@@ -41,12 +38,12 @@ export const texts = {
 
 	orderRedirect: {
 		ru: [
-			'🧾 Заказ №{id}',
+			'🧾 Заказ',
 			'',
 			'Открой его в магазине: актуальный статус, коды ваучеров и ссылка на оплату — внутри.',
 		].join('\n'),
 		uz: [
-			'🧾 {id}-buyurtma',
+			'🧾 Buyurtma',
 			'',
 			'Do‘konda oching: holati, vaucher kodlari va to‘lov havolasi ichida.',
 		].join('\n'),
@@ -64,7 +61,7 @@ export const texts = {
 			'1. Открой магазин — кнопка меню или /start',
 			'2. Выбери игру и номинал',
 			'3. Проверь корзину и нажми «Оплатить»',
-			'4. Оплати картой на странице Welcome Pay',
+			'4. Оплати картой по платёжной ссылке',
 			'5. Код ваучера или статус пополнения придёт сюда и останется в разделе «Заказы»',
 			'',
 			'Поддержка: /support',
@@ -75,7 +72,7 @@ export const texts = {
 			"1. Do'konni oching — menyu tugmasi yoki /start",
 			"2. O'yin va nominalni tanlang",
 			'3. Savatni tekshirib «To‘lash»ni bosing',
-			"4. Welcome Pay sahifasida karta orqali to'lang",
+			"4. To‘lov havolasi orqali karta bilan to'lang",
 			'5. Vaucher kodi yoki to‘ldirish holati shu yerga keladi va «Buyurtmalar»da qoladi',
 			'',
 			'Yordam: /support',
@@ -99,6 +96,3 @@ export const texts = {
 		uz: "Tushunmadim 🤔 Buyruqlar: /start — do'kon, /help — qanday xarid qilinadi, /support — yordam.",
 	} satisfies Copy,
 }
-
-export const orderRedirectText = (lang: Lang, id: string) =>
-	fill(texts.orderRedirect[lang], { id })
