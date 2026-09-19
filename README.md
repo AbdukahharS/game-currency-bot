@@ -11,9 +11,9 @@ deep links and navigation into the Mini App.
 |---|---|
 | Bot menu button | Opens the Mini App (`WEBAPP_URL`) |
 | `/start` | Greeting + "Open shop" button (`web_app`) |
-| `/start order_{id}` | Payment return deep link (TZ §7.2): button that opens the Mini App on the order page (`startapp=order_{id}`) |
+| `/start order_{id}` | Payment return deep link (TZ §7.2): button that opens the Mini App on the order page (`startapp=order_{id}`); the backend ids orders by UUID, numeric tails from old links still match |
 | `/help` | How to buy (5 steps) |
-| `/support` | Support link from admin settings (`/api/config → support_link`), cached for 5 minutes |
+| `/support` | Support link from `SUPPORT_URL` — the rewritten backend has no public config endpoint, so env is the only source |
 | §10 notifications | **Not sent by the bot**: the backend sends them directly via the Bot API with the same token (`backend/app/services/notifications.py`) — users see them from the same bot |
 
 The bot's message language (ru/uz) follows the Telegram client's interface
@@ -30,8 +30,7 @@ bun run dev                           # long polling
 ```
 
 Required variables: `TELEGRAM_BOT_TOKEN`, `WEBAPP_URL` (or `PUBLIC_BASE_URL`).
-Optional: `API_BASE_URL` (support link from the admin panel), `SUPPORT_URL`,
-webhook variables.
+Optional: `SUPPORT_URL` (link for the /support command), webhook variables.
 
 Production — webhook:
 
@@ -52,9 +51,7 @@ src/
 ├── bot.ts              # grammY instance, menu button, commands
 ├── config.ts           # env (secrets live only in the environment, TZ §11.1)
 ├── texts.ts            # ru/uz texts
-├── handlers/
-│   ├── start.ts        # /start + order_{id} deep link
-│   └── menu.ts         # /help, /support
-└── services/
-    └── support.ts      # support link from the API's public config
+└── handlers/
+    ├── start.ts        # /start + order_{uuid} deep link
+    └── menu.ts         # /help, /support (SUPPORT_URL)
 ```
