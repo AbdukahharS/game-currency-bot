@@ -22,13 +22,20 @@ export function createBot(token: string): Bot {
 
 /** Menu button opens the Mini App (the deployed storefront); register commands. */
 export async function setupBot(bot: Bot): Promise<void> {
-	await bot.api.setChatMenuButton({
-		menu_button: {
-			type: 'web_app',
-			text: 'GameCoin',
-			web_app: { url: config.webAppUrl },
-		},
-	})
+	try {
+		await bot.api.setChatMenuButton({
+			menu_button: {
+				type: 'web_app',
+				text: 'GameCoin',
+				web_app: { url: config.webAppUrl },
+			},
+		})
+	} catch (e) {
+		// cosmetic — e.g. Telegram requires HTTPS for the menu button, so a
+		// plain-http dev WEBAPP_URL must not keep the bot (and its auth
+		// exchange endpoint) from starting
+		console.warn('[bot] setChatMenuButton failed (ignored):', e)
+	}
 	await bot.api.setMyCommands([
 		{ command: 'start', description: 'Магазин / Do‘kon' },
 		{ command: 'help', description: 'Как купить / Qanday xarid qilinadi' },
