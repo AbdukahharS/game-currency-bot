@@ -17,6 +17,10 @@ export const config = {
 	get botToken(): string {
 		return required('TELEGRAM_BOT_TOKEN')
 	},
+	/** Deployed API the auth-exchange endpoint mints tokens against. */
+	get apiBaseUrl(): string {
+		return required('API_BASE_URL')
+	},
 	/** Mini App URL — the deployed frontend. Falls back to the site origin. */
 	get webAppUrl(): string {
 		const url = optional('WEBAPP_URL') ?? optional('PUBLIC_BASE_URL')
