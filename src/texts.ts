@@ -14,7 +14,7 @@ type Copy = Record<Lang, string>
 export const texts = {
 	greeting: {
 		ru: [
-			'🎮 <b>GameCoin</b>',
+			'🎮 <b>PayGames</b>',
 			'',
 			'Игровая валюта PUBG Mobile и пополнение Steam.',
 			'Оплата в сумах: Uzcard, Humo, Visa, Mastercard.',
@@ -22,7 +22,7 @@ export const texts = {
 			'Жми «Открыть магазин» — каталог, корзина и история заказов внутри.',
 		].join('\n'),
 		uz: [
-			'🎮 <b>GameCoin</b>',
+			'🎮 <b>PayGames</b>',
 			'',
 			'PUBG Mobile o‘yin valyutasi va Steam hisobini to‘ldirish.',
 			'To‘lov so‘mda: Uzcard, Humo, Visa, Mastercard.',

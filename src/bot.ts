@@ -26,7 +26,7 @@ export async function setupBot(bot: Bot): Promise<void> {
 		await bot.api.setChatMenuButton({
 			menu_button: {
 				type: 'web_app',
-				text: 'GameCoin',
+				text: 'PayGames',
 				web_app: { url: config.webAppUrl },
 			},
 		})
